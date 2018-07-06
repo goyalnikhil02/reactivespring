@@ -1,7 +1,9 @@
 package com.springbotgradle.gradledemo;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,10 @@ public class EmpResource {
 	@GetMapping(value = "/{id}/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<PersonEvent> getEvents(@PathVariable("id")
                                     final Integer empId) {
+		//Stream<String> streamGenerated =
+				  Stream.generate(() -> "element").forEach(System.out::println);;
+		
+		//System.out.println("###################"+streamGenerated);
         return empRepo.findById(empId)
                 .flatMapMany(employee -> {
 
@@ -53,7 +59,14 @@ public class EmpResource {
                                     Stream.generate(() -> new PersonEvent(employee,
                                             new Date()))
                             );
-
+           List<String> alist=new ArrayList<String>();
+           alist.add("Nikhil");
+           alist.add("Goyal");
+           alist.add("RAM");
+           
+                    Flux<List<String>> flux =
+                            Flux.fromStream(Stream.generate(() -> alist)
+                            );
 
                     return Flux.zip(interval, employeeEventFlux)
                             .map(Tuple2::getT2);
